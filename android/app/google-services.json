@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1067559891225",
+    "firebase_url": "https://lesson-7-a161f-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "lesson-7-a161f",
+    "storage_bucket": "lesson-7-a161f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1067559891225:android:6a5cec73773a3f6f68d588",
+        "android_client_info": {
+          "package_name": "com.example.lesson_7"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1067559891225-2iqh00inchqvsmorbe3o19qc2bqt06k5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.lesson_7",
+            "certificate_hash": "2e2a7ff015e3d4e9c897be77ba77a576e965ab3c"
+          }
+        },
+        {
+          "client_id": "1067559891225-8sh5c1joputacokvdet4empkjuakvs9i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCwI3Eb9BF-Li4_epcKLjmyW-xLmwBdIaM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1067559891225-8sh5c1joputacokvdet4empkjuakvs9i.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1067559891225-801lcaif8usi5ie8993on42bvgv98lfk.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.lesson7"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
