@@ -94,4 +94,32 @@ class FoursquareService {
       return [];
     }
   }
+
+  Future<List<dynamic>> getNearbyPlaces(String query, {int limit = 30}) async {
+    // San Fernando, Pampanga coordinates (change if needed)
+    final double lat = 15.0594;
+    final double lon = 120.6567;
+    final int maxRadius = 50000;
+
+    final uri = Uri.parse(
+      '$baseUrl/search?query=${Uri.encodeComponent(query)}'
+      '&ll=$lat,$lon'
+      '&radius=$maxRadius'
+      '&limit=$limit'
+      '&sort=POPULARITY',
+    );
+
+    final response = await http.get(uri, headers: {
+      'Authorization': apiKey,
+      'Accept': 'application/json',
+    });
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return data['results'];
+    } else {
+      throw Exception(
+          'Failed to search nearby for "$query": ${response.statusCode}');
+    }
+  }
 }

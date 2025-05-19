@@ -20,6 +20,11 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
   Map<String, String?> images = {};
   bool isLoading = true;
 
+  String searchQuery = '';
+  List<dynamic> searchResults = [];
+  bool isSearching = false;
+  TextEditingController searchController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -387,6 +392,49 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: TextField(
+                      controller: searchController,
+                      decoration: InputDecoration(
+                        hintText: 'Search for a place near you...',
+                        prefixIcon: Icon(Icons.search),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                        filled: true,
+                        fillColor: Colors.white,
+                      ),
+                      onSubmitted: (value) async {
+                        setState(() {
+                          isSearching = true;
+                        });
+                        final results = await FoursquareService()
+                            .getNearbyPlaces(value, limit: 30);
+                        setState(() {
+                          searchQuery = value;
+                          searchResults = results;
+                          isSearching = false;
+                        });
+                      },
+                    ),
+                  ),
+                  if (isSearching)
+                    const Center(child: CircularProgressIndicator())
+                  else if (searchResults.isNotEmpty)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16.0, vertical: 8),
+                          child: Text('Search Results',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 18)),
+                        ),
+                        buildAttractionList(
+                            searchResults.toList(), Colors.purple.shade50),
+                      ],
+                    ),
                   const Padding(
                     padding: EdgeInsets.all(16.0),
                     child: Text(
