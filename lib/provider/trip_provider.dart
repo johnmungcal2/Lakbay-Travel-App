@@ -9,7 +9,6 @@ class TripNotifier extends StateNotifier<List<Trip>> {
   final DatabaseReference _database = FirebaseDatabase.instance.refFromURL(
       'https://lesson-7-a161f-default-rtdb.asia-southeast1.firebasedatabase.app/users');
 
-  // Add a new trip to Firebase for the logged-in user
   Future<void> addTrip(Trip trip) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
@@ -17,8 +16,7 @@ class TripNotifier extends StateNotifier<List<Trip>> {
     }
 
     final userId = user.uid;
-    final userTripsRef =
-        _database.child(userId).push(); // Generate a unique key
+    final userTripsRef = _database.child(userId).push();
 
     await userTripsRef.set({
       'tripName': trip.tripName,
@@ -28,20 +26,18 @@ class TripNotifier extends StateNotifier<List<Trip>> {
       'description': trip.description,
     });
 
-    // Add the firebaseKey to the trip and update the local state
     final tripWithKey = Trip(
       tripName: trip.tripName,
       destination: trip.destination,
       startDate: trip.startDate,
       endDate: trip.endDate,
       description: trip.description,
-      firebaseKey: userTripsRef.key, // Assign the Firebase key
+      firebaseKey: userTripsRef.key,
     );
 
     state = [...state, tripWithKey];
   }
 
-  // Fetch trips from Firebase for the logged-in user
   Future<void> fetchTrips() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
@@ -54,7 +50,7 @@ class TripNotifier extends StateNotifier<List<Trip>> {
     if (snapshot.exists && snapshot.value != null) {
       final tripsData = snapshot.value as Map<dynamic, dynamic>;
       final trips = tripsData.entries.map((entry) {
-        final key = entry.key; // Firebase-generated key
+        final key = entry.key;
         final data = entry.value;
 
         return Trip(
@@ -63,7 +59,7 @@ class TripNotifier extends StateNotifier<List<Trip>> {
           startDate: DateTime.parse(data['startDate']),
           endDate: DateTime.parse(data['endDate']),
           description: data['description'],
-          firebaseKey: key, // Assign the Firebase key
+          firebaseKey: key,
         );
       }).toList();
 
@@ -81,21 +77,19 @@ class TripNotifier extends StateNotifier<List<Trip>> {
 
     final userId = user.uid;
 
-    print('Deleting trip with firebaseKey: $tripKey'); // Debug log
-    print('User ID: $userId'); // Debug log
+    print('Deleting trip with firebaseKey: $tripKey');
+    print('User ID: $userId');
 
-    // Delete the trip from Firebase
     await _database.child(userId).child(tripKey).remove();
 
-    print('Trip deleted from Firebase'); // Debug log
+    print('Trip deleted from Firebase');
 
-    // Also remove it from local state
     state = [
       for (final trip in state)
         if (trip.firebaseKey != tripKey) trip,
     ];
 
-    print('Local state updated'); // Debug log
+    print('Local state updated');
   }
 
   Future<void> updateTrip(Trip updatedTrip) async {
@@ -112,7 +106,6 @@ class TripNotifier extends StateNotifier<List<Trip>> {
 
     final tripRef = _database.child(userId).child(updatedTrip.firebaseKey!);
 
-    // Update the trip in Firebase
     await tripRef.update({
       'tripName': updatedTrip.tripName,
       'destination': updatedTrip.destination,

@@ -6,6 +6,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:lesson_7/provider/auth/auth_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class EmailVerificationScreen extends HookConsumerWidget {
   const EmailVerificationScreen({super.key});
@@ -81,7 +82,9 @@ class EmailVerificationScreen extends HookConsumerWidget {
         await FirebaseAuth.instance.currentUser?.reload();
         final user = FirebaseAuth.instance.currentUser;
         if (user != null && user.emailVerified && context.mounted) {
-          context.go('/home');
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setBool('onboardingComplete', false);
+          context.go('/onboarding');
         }
       } catch (e) {
         if (context.mounted) {
@@ -119,57 +122,141 @@ class EmailVerificationScreen extends HookConsumerWidget {
     }, [context, ref]);
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Verify Email'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Colors.white,
+        elevation: 0,
+        title: null,
+        centerTitle: false,
+        surfaceTintColor: Colors.transparent,
+        shadowColor: Colors.transparent,
       ),
       body: Padding(
-        padding: EdgeInsets.all(24.0),
+        padding: const EdgeInsets.all(24.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Icon(Icons.email_outlined, size: 80, color: Colors.orange),
-            SizedBox(height: 24),
-            Text(
-              'Check/Verify your Email',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 16),
-            Text(
-              'A Verification email has been sent to ${ref.read(authServiceProvider).currentUser?.email}.'
-              'Please check your inbox and click the verification link.',
-              style: TextStyle(fontSize: 16, color: Colors.black54),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 32),
-            if (isEmailSent.value)
-              Text(
-                'Verification email sent!, Check your Inbox',
-                style: TextStyle(
-                  color: Colors.green,
-                  fontWeight: FontWeight.bold,
+            Column(
+              children: [
+                const Text(
+                  'Verification',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
                 ),
-              )
-            else
-              ElevatedButton(
-                onPressed: () => sendVerificationEmail(
-                  isEmailSent,
-                  lastResendAttempt,
-                  ref,
+                const SizedBox(height: 16),
+                Text(
+                  'Please check your inbox (${ref.read(authServiceProvider).currentUser?.email ?? ''}) and click the link to verify your account.',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Color(0xFF808080),
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                child: Text('Resend Verification Email  '),
-              ),
-            SizedBox(height: 32),
-            TextButton(
-              onPressed: () async {
-                await ref.read(authServiceProvider).signOut();
-              },
-              child: Text('Log Out'),
+              ],
+            ),
+            Image.asset(
+              'lib/assets/images/verification.png',
+              height: 350,
+              fit: BoxFit.contain,
+            ),
+            Column(
+              children: [
+                if (isEmailSent.value)
+                  const Text(
+                    'Verification email sent! Check your Inbox',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.green,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  )
+                else
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [
+                          Color(0xFF4644db),
+                          Color(0xFF8e6eeb),
+                          Color(0xFFe49efc),
+                        ],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                      ),
+                      borderRadius: BorderRadius.circular(40),
+                    ),
+                    child: TextButton(
+                      onPressed: () => sendVerificationEmail(
+                        isEmailSent,
+                        lastResendAttempt,
+                        ref,
+                      ),
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        minimumSize: const Size(double.infinity, 48),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(40),
+                        ),
+                        foregroundColor: Colors.white,
+                        overlayColor: Colors.white24,
+                      ),
+                      child: const Text(
+                        'Resend Verification Email',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                const SizedBox(height: 10),
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [
+                        Color(0xFF4644db),
+                        Color(0xFF8e6eeb),
+                        Color(0xFFe49efc),
+                      ],
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                    ),
+                    borderRadius: BorderRadius.circular(40),
+                  ),
+                  child: Container(
+                    margin: const EdgeInsets.all(1),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(40),
+                    ),
+                    child: TextButton(
+                      onPressed: () async {
+                        await ref.read(authServiceProvider).signOut();
+                      },
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        minimumSize: const Size(double.infinity, 48),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(40),
+                        ),
+                        foregroundColor: Colors.black,
+                      ),
+                      child: const Text(
+                        'Sign Out',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

@@ -1,6 +1,7 @@
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:lesson_7/firebase_options.dart';
 import 'package:lesson_7/routes/app_router.dart';
@@ -17,10 +18,10 @@ void main() async {
   );
   runApp(ProviderScope(child: MyApp()));
 }
- 
+
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
- 
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(goRouterProvider);
@@ -30,9 +31,14 @@ class MyApp extends ConsumerWidget {
         title: 'Flutter Firebase Riverpod Demo',
         theme: ThemeData(
           useMaterial3: true,
+          textTheme: GoogleFonts.openSansTextTheme(),
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
+          progressIndicatorTheme: ProgressIndicatorThemeData(
+            color: Colors.black,
+          ),
         ),
         routerConfig: router,
+        debugShowCheckedModeBanner: false,
       ),
     );
   }

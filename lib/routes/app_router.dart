@@ -10,6 +10,9 @@ import 'package:lesson_7/screens/auth/verification_screen.dart';
 import 'package:lesson_7/screens/home_screen.dart';
 import 'package:lesson_7/screens/profile_screen.dart';
 import 'package:lesson_7/screens/splash_screen.dart';
+import 'package:lesson_7/screens/discover_screen.dart';
+import 'package:lesson_7/screens/onboarding_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final goRouterProvider = Provider<GoRouter>((ref) {
   final authStateStream = ref.watch(authStateProvider.stream);
@@ -33,8 +36,15 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(path: '/home', builder: (context, state) => HomeScreen()),
       GoRoute(path: '/profile', builder: (context, state) => ProfileScreen()),
+      GoRoute(
+          path: '/discover',
+          builder: (context, state) => const DiscoverScreen()),
+      GoRoute(
+        path: '/onboarding',
+        builder: (context, state) => OnboardingScreen(),
+      ),
     ],
-    redirect: (context, state) {
+    redirect: (context, state) async {
       if (splashAsync.isLoading) return null;
       final isAuthenticated = ref.read(authStateProvider).valueOrNull != null;
       final isAuthenticating = ref.read(authStateProvider).isLoading;
@@ -49,9 +59,14 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           currentLocation == '/signup' ||
           currentLocation == '/forgot-password';
 
+      final prefs = await SharedPreferences.getInstance();
+      final onboardingComplete = prefs.getBool('onboardingComplete') ?? false;
+
       if (isAuthenticated) {
         if (needsVerification) {
           return currentLocation == '/verification' ? null : '/verification';
+        } else if (!onboardingComplete) {
+          return currentLocation == '/onboarding' ? null : '/onboarding';
         } else {
           return currentLocation == '/home' ? null : '/home';
         }

@@ -43,6 +43,19 @@ class AddTripScreen extends HookConsumerWidget {
         initialDate: DateTime.now(),
         firstDate: DateTime(2000),
         lastDate: DateTime(2100),
+        builder: (context, child) {
+          return Theme(
+            data: Theme.of(context).copyWith(
+              colorScheme: const ColorScheme.light(
+                primary: Color(0xFF8e6eeb),
+                onPrimary: Colors.white,
+                onSurface: Colors.black,
+              ),
+              dialogBackgroundColor: Colors.white,
+            ),
+            child: child!,
+          );
+        },
       );
 
       if (selectedDate != null) {
@@ -51,7 +64,7 @@ class AddTripScreen extends HookConsumerWidget {
           isStartDate ? 'startDate' : 'endDate': selectedDate,
         };
 
-        final formatted = selectedDate.toLocal().toString().split(' ')[0];
+        final formatted = DateFormat.yMMMd().format(selectedDate);
         if (isStartDate) {
           startDateController.text = formatted;
         } else {
@@ -60,9 +73,15 @@ class AddTripScreen extends HookConsumerWidget {
       }
     }
 
+    final isEditing = trip?.firebaseKey != null;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(trip == null ? 'Add Trip' : 'Edit Trip'),
+        title: Text(isEditing ? 'Edit Trip' : 'Add Trip'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        foregroundColor: Colors.black,
+        automaticallyImplyLeading: false,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -72,9 +91,34 @@ class AddTripScreen extends HookConsumerWidget {
             children: [
               TextFormField(
                 controller: tripNameController,
+                style: const TextStyle(fontSize: 14),
                 decoration: const InputDecoration(
                   labelText: 'Trip Name',
-                  border: OutlineInputBorder(),
+                  labelStyle: TextStyle(
+                    fontSize: 14,
+                    color: Color(0xFF808080),
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                    borderSide: BorderSide(
+                      color: Color(0xFFD8D8D8),
+                      width: 1,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                    borderSide: BorderSide(
+                      color: Color(0xFFD8D8D8),
+                      width: 1,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                    borderSide: BorderSide(
+                      color: Color(0xFF4644db),
+                      width: 2,
+                    ),
+                  ),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -86,9 +130,34 @@ class AddTripScreen extends HookConsumerWidget {
               const SizedBox(height: 16),
               TextFormField(
                 controller: destinationController,
+                style: const TextStyle(fontSize: 14),
                 decoration: InputDecoration(
                   labelText: 'Destination',
-                  border: const OutlineInputBorder(),
+                  labelStyle: const TextStyle(
+                    fontSize: 14,
+                    color: Color(0xFF808080),
+                  ),
+                  border: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                    borderSide: BorderSide(
+                      color: Color(0xFFD8D8D8),
+                      width: 1,
+                    ),
+                  ),
+                  enabledBorder: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                    borderSide: BorderSide(
+                      color: Color(0xFFD8D8D8),
+                      width: 1,
+                    ),
+                  ),
+                  focusedBorder: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                    borderSide: BorderSide(
+                      color: Color(0xFF4644db),
+                      width: 2,
+                    ),
+                  ),
                   suffixIcon: IconButton(
                     icon: const Icon(Icons.arrow_drop_down),
                     onPressed: () async {
@@ -105,7 +174,10 @@ class AddTripScreen extends HookConsumerWidget {
                                 itemBuilder: (context, index) {
                                   final country = countries[index];
                                   return ListTile(
-                                    title: Text(country),
+                                    title: Text(
+                                      country,
+                                      style: const TextStyle(fontSize: 14),
+                                    ),
                                     onTap: () {
                                       Navigator.of(context).pop(country);
                                     },
@@ -134,9 +206,34 @@ class AddTripScreen extends HookConsumerWidget {
               TextFormField(
                 controller: startDateController,
                 readOnly: true,
+                style: const TextStyle(fontSize: 14),
                 decoration: const InputDecoration(
                   labelText: 'Start Date',
-                  border: OutlineInputBorder(),
+                  labelStyle: TextStyle(
+                    fontSize: 14,
+                    color: Color(0xFF808080),
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                    borderSide: BorderSide(
+                      color: Color(0xFFD8D8D8),
+                      width: 1,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                    borderSide: BorderSide(
+                      color: Color(0xFFD8D8D8),
+                      width: 1,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                    borderSide: BorderSide(
+                      color: Color(0xFF4644db),
+                      width: 2,
+                    ),
+                  ),
                   suffixIcon: Icon(Icons.calendar_today),
                 ),
                 onTap: () => pickDate(context, true),
@@ -151,9 +248,34 @@ class AddTripScreen extends HookConsumerWidget {
               TextFormField(
                 controller: endDateController,
                 readOnly: true,
+                style: const TextStyle(fontSize: 14),
                 decoration: const InputDecoration(
                   labelText: 'End Date',
-                  border: OutlineInputBorder(),
+                  labelStyle: TextStyle(
+                    fontSize: 14,
+                    color: Color(0xFF808080),
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                    borderSide: BorderSide(
+                      color: Color(0xFFD8D8D8),
+                      width: 1,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                    borderSide: BorderSide(
+                      color: Color(0xFFD8D8D8),
+                      width: 1,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                    borderSide: BorderSide(
+                      color: Color(0xFF4644db),
+                      width: 2,
+                    ),
+                  ),
                   suffixIcon: Icon(Icons.calendar_today),
                 ),
                 onTap: () => pickDate(context, false),
@@ -173,9 +295,34 @@ class AddTripScreen extends HookConsumerWidget {
               TextFormField(
                 controller: descriptionController,
                 maxLines: 3,
+                style: const TextStyle(fontSize: 14),
                 decoration: const InputDecoration(
                   labelText: 'Description',
-                  border: OutlineInputBorder(),
+                  labelStyle: TextStyle(
+                    fontSize: 14,
+                    color: Color(0xFF808080),
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                    borderSide: BorderSide(
+                      color: Color(0xFFD8D8D8),
+                      width: 1,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                    borderSide: BorderSide(
+                      color: Color(0xFFD8D8D8),
+                      width: 1,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                    borderSide: BorderSide(
+                      color: Color(0xFF4644db),
+                      width: 2,
+                    ),
+                  ),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -184,8 +331,29 @@ class AddTripScreen extends HookConsumerWidget {
                   return null;
                 },
               ),
-              const SizedBox(height: 16),
-              ElevatedButton(
+            ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [
+                    Color(0xFF4644db),
+                    Color(0xFF8e6eeb),
+                    Color(0xFFe49efc),
+                  ],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                ),
+                borderRadius: BorderRadius.circular(40),
+              ),
+              child: TextButton(
                 onPressed: () async {
                   if (formKey.currentState!.validate()) {
                     final newTrip = Trip(
@@ -197,7 +365,7 @@ class AddTripScreen extends HookConsumerWidget {
                       firebaseKey: trip?.firebaseKey,
                     );
 
-                    if (trip == null) {
+                    if (!isEditing) {
                       await ref.read(tripProvider.notifier).addTrip(newTrip);
                     } else {
                       await ref.read(tripProvider.notifier).updateTrip(newTrip);
@@ -206,10 +374,69 @@ class AddTripScreen extends HookConsumerWidget {
                     GoRouter.of(context).pop();
                   }
                 },
-                child: Text(trip == null ? 'Save Trip' : 'Update Trip'),
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  minimumSize: const Size(double.infinity, 48),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(40),
+                  ),
+                  foregroundColor: Colors.white,
+                  overlayColor: Colors.white24,
+                ),
+                child: Text(
+                  isEditing ? 'Update Trip' : 'Save Trip',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 10),
+            Container(
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [
+                    Color(0xFF4644db),
+                    Color(0xFF8e6eeb),
+                    Color(0xFFe49efc),
+                  ],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                ),
+                borderRadius: BorderRadius.circular(40),
+              ),
+              child: Container(
+                margin: const EdgeInsets.all(1),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(40),
+                ),
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.of(context).maybePop();
+                  },
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    minimumSize: const Size(double.infinity, 48),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(40),
+                    ),
+                    foregroundColor: Colors.black,
+                  ),
+                  child: const Text(
+                    'Return',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
